@@ -1,2 +1,6 @@
 # BimbZwembad
-.Net project van Thomas More 
+-Berre Vandepas
+-Mathias Cuyt
+-Ihissan Fofana
+-Bram Willems
+

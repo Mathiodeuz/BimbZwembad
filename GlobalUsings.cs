@@ -1,0 +1,12 @@
+global using System.ComponentModel.DataAnnotations;
+global using System.Diagnostics;
+global using Microsoft.AspNetCore.Authorization;
+global using Microsoft.AspNetCore.Mvc;
+global using Mapster;
+global using Microsoft.AspNetCore.Identity;
+global using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+global using Microsoft.EntityFrameworkCore;
+global using Zwemclub.Models;
+global using Zwemclub.Data;
+global using Zwemclub.Data.Repository;
+global using Zwemclub.Data.UnitOfWork;

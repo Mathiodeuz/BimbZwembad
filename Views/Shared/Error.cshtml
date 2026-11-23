@@ -1,0 +1,15 @@
+@{
+    ViewData["Title"] = "Fout";
+    var requestId = ViewData["RequestId"] as string;
+}
+
+<h1 class="text-danger">Er is een fout opgetreden.</h1>
+<p>Probeer het later opnieuw.</p>
+@if (!string.IsNullOrEmpty(requestId))
+{
+    <p>
+        <strong>Aanvraagnummer:</strong>
+        <code>@requestId</code>
+    </p>
+}
+<a asp-controller="Home" asp-action="Index">Terug naar de startpagina</a>

@@ -10,7 +10,8 @@ namespace Zwemclub.Data.Repository
 
         public async Task<TEntity?> GetByIdAsync<TId>(TId id) where TId : notnull
         {
-            return await context.Set<TEntity>().FindAsync(id);
+            return await context.Set<TEntity>()
+                .FirstOrDefaultAsync(e => EF.Property<TId>(e, "Id").Equals(id));
         }
 
         public async Task AddAsync(TEntity entity)
@@ -30,9 +31,9 @@ namespace Zwemclub.Data.Repository
 
         public async Task<bool> ExistsAsync<TId>(TId id) where TId : notnull
         {
-            return await context.Set<TEntity>().FindAsync(id) != null;
+            return await context.Set<TEntity>()
+                .AnyAsync(e => EF.Property<TId>(e, "Id").Equals(id));
         }
-
         public void RemoveRange(List<TEntity> entities)
         {
             context.Set<TEntity>().RemoveRange(entities);

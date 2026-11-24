@@ -28,10 +28,6 @@ namespace Zwemclub.Models
 
         public Geslacht? Geslacht { get; set; }
 
-        public ICollection<GebruikerCarpool> CarpoolDeelnames { get; set; } = [];
-
-        public ICollection<Carpool> AangemaakteCarpools { get; set; } = [];
-
         public ICollection<VoogdZwemmer> ZwemmersAlsVoogd { get; set; } = [];
 
         public ICollection<VoogdZwemmer> VoogdenAlsZwemmer { get; set; } = [];

@@ -2,13 +2,13 @@ namespace Zwemclub.Data
 {
     public class ZwemclubContext(DbContextOptions<ZwemclubContext> options) : IdentityDbContext<CustomUser>(options)
     {
-        public DbSet<GebruikerCarpool> GebruikerCarpools => Set<GebruikerCarpool>();
+        
         public DbSet<Parameter> Parameters => Set<Parameter>();
         public DbSet<TrainerGroep> TrainerGroepen => Set<TrainerGroep>();
         public DbSet<ReeksType> ReeksTypes => Set<ReeksType>();
         public DbSet<InschrijvingWedstrijd> InschrijvingWedstrijden => Set<InschrijvingWedstrijd>();
         public DbSet<WedstrijdReeks> WedstrijdReeksen => Set<WedstrijdReeks>();
-        public DbSet<Carpool> Carpools => Set<Carpool>();
+       
         public DbSet<Mail> Mails => Set<Mail>();
         public DbSet<VoogdZwemmer> VoogdZwemmers => Set<VoogdZwemmer>();
         public DbSet<Plaats> Plaatsen => Set<Plaats>();
@@ -19,7 +19,7 @@ namespace Zwemclub.Data
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<CustomUser>().ToTable("AspNetUsers");
-            modelBuilder.Entity<GebruikerCarpool>().ToTable("GebruikerCarpool");
+            
             modelBuilder.Entity<Parameter>().ToTable("Parameter");
             modelBuilder.Entity<TrainerGroep>().ToTable("TrainerGroep");
             modelBuilder.Entity<ReeksType>().ToTable("ReeksType");
@@ -72,7 +72,7 @@ namespace Zwemclub.Data
 
             modelBuilder.Entity<InschrijvingWedstrijd>().ToTable("InschrijvingWedstrijd");
             modelBuilder.Entity<WedstrijdReeks>().ToTable("WedstrijdReeks");
-            modelBuilder.Entity<Carpool>().ToTable("Carpool");
+            
             modelBuilder.Entity<Mail>().ToTable("Mail");
             modelBuilder.Entity<VoogdZwemmer>().ToTable("VoogdZwemmer");
             modelBuilder.Entity<Plaats>().ToTable("Plaats");
@@ -85,29 +85,7 @@ namespace Zwemclub.Data
                 .HasForeignKey(e => e.GeslachtId)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            modelBuilder.Entity<GebruikerCarpool>()
-                .HasOne(e => e.Gebruiker)
-                .WithMany(e => e.CarpoolDeelnames)
-                .HasForeignKey(e => e.GebruikerId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<GebruikerCarpool>()
-                .HasOne(e => e.Carpool)
-                .WithMany(e => e.Deelnemers)
-                .HasForeignKey(e => e.CarpoolId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<Carpool>()
-                .HasOne(e => e.Ouder)
-                .WithMany(e => e.AangemaakteCarpools)
-                .HasForeignKey(e => e.OuderId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Carpool>()
-                .HasOne(e => e.Wedstrijd)
-                .WithMany(e => e.Carpools)
-                .HasForeignKey(e => e.WedstrijdId)
-                .OnDelete(DeleteBehavior.Restrict);
+            
 
             modelBuilder.Entity<VoogdZwemmer>()
                 .HasOne(e => e.Voogd)
@@ -578,28 +556,9 @@ namespace Zwemclub.Data
                     DatumDefinitief = new DateTime(2026, 10, 24, 12, 0, 0)
                 });
 
-            modelBuilder.Entity<Carpool>().HasData(new Carpool
-            {
-                Id = 1,
-                OuderId = "zwemclub-ouder",
-                WedstrijdId = 1,
-                AantalBeschikbarePlaatsen = 3,
-                VertrekPlaats = "Parking clubzwembad",
-                VertrekUur = new DateTime(2026, 11, 15, 8, 30, 0),
-                GeschatUurTerugkomst = new DateTime(2026, 11, 15, 15, 0, 0),
-                IsVerwijderd = false
-            });
+            
 
-            modelBuilder.Entity<GebruikerCarpool>().HasData(new GebruikerCarpool
-            {
-                Id = 1,
-                GebruikerId = "zwemclub-zwemmer",
-                CarpoolId = 1,
-                IsBevestigd = true,
-                DatumAanvraag = new DateOnly(2026, 10, 21),
-                DatumBevestigd = new DateOnly(2026, 10, 22),
-                AantalPersonen = 1
-            });
+            
 
             modelBuilder.Entity<VoogdZwemmer>().HasData(new VoogdZwemmer
             {
@@ -705,7 +664,20 @@ namespace Zwemclub.Data
                 Onderwerp = "Je inschrijving bij Zwemclub",
                 Body = "Je inschrijving voor de wedstrijd is bevestigd."
             });
+            //soft deletes
+            modelBuilder.Entity<CustomUser>().HasQueryFilter(u => u.IsVerwijderd != true); //dit is een bool?
+            modelBuilder.Entity<Wedstrijd>().HasQueryFilter(w => !w.IsVerwijderd);
+            modelBuilder.Entity<WedstrijdReeks>().HasQueryFilter(r => !r.IsVerwijderd);
+            modelBuilder.Entity<InschrijvingWedstrijd>().HasQueryFilter(i => !i.IsVerwijderd);
+            modelBuilder.Entity<Plaats>().HasQueryFilter(p => !p.IsVerwijderd);
+            modelBuilder.Entity<Geslacht>().HasQueryFilter(g => !g.IsVerwijderd);
+            modelBuilder.Entity<ReeksType>().HasQueryFilter(r => !r.IsVerwijderd);
+            modelBuilder.Entity<Mail>().HasQueryFilter(m => !m.IsVerwijderd);
+            modelBuilder.Entity<TrainerGroep>()
+                .HasQueryFilter(t => t.Trainer.IsVerwijderd != true && t.Zwemmer.IsVerwijderd != true);
 
+            modelBuilder.Entity<VoogdZwemmer>()
+                .HasQueryFilter(v => v.Voogd.IsVerwijderd != true && v.Zwemmer.IsVerwijderd != true);
         }
     }
 }

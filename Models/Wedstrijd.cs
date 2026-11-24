@@ -19,8 +19,6 @@ namespace Zwemclub.Models
 
         public bool IsVerwijderd { get; set; }
 
-        public ICollection<Carpool> Carpools { get; set; } = [];
-
         public ICollection<WedstrijdReeks> Reeksen { get; set; } = [];
 
         public Plaats Plaats { get; set; } = null!;

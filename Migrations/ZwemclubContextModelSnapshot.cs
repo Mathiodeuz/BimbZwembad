@@ -257,61 +257,6 @@ namespace Zwemclub.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Zwemclub.Models.Carpool", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AantalBeschikbarePlaatsen")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("GeschatUurTerugkomst")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool?>("IsVerwijderd")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("OuderId")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("VertrekPlaats")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<DateTime>("VertrekUur")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("WedstrijdId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OuderId");
-
-                    b.HasIndex("WedstrijdId");
-
-                    b.ToTable("Carpool", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AantalBeschikbarePlaatsen = 3,
-                            GeschatUurTerugkomst = new DateTime(2026, 11, 15, 15, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsVerwijderd = false,
-                            OuderId = "zwemclub-ouder",
-                            VertrekPlaats = "Parking clubzwembad",
-                            VertrekUur = new DateTime(2026, 11, 15, 8, 30, 0, 0, DateTimeKind.Unspecified),
-                            WedstrijdId = 1
-                        });
-                });
-
             modelBuilder.Entity("Zwemclub.Models.CustomUser", b =>
                 {
                     b.Property<string>("Id")
@@ -726,55 +671,6 @@ namespace Zwemclub.Migrations
                             UniekNummer = "ZC-0014",
                             UserName = "trainer-3@zwemclub.example",
                             Voornaam = "Tom"
-                        });
-                });
-
-            modelBuilder.Entity("Zwemclub.Models.GebruikerCarpool", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AantalPersonen")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CarpoolId")
-                        .HasColumnType("int");
-
-                    b.Property<DateOnly>("DatumAanvraag")
-                        .HasColumnType("date");
-
-                    b.Property<DateOnly>("DatumBevestigd")
-                        .HasColumnType("date");
-
-                    b.Property<string>("GebruikerId")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("IsBevestigd")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CarpoolId");
-
-                    b.HasIndex("GebruikerId");
-
-                    b.ToTable("GebruikerCarpool", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AantalPersonen = 1,
-                            CarpoolId = 1,
-                            DatumAanvraag = new DateOnly(2026, 10, 21),
-                            DatumBevestigd = new DateOnly(2026, 10, 22),
-                            GebruikerId = "zwemclub-zwemmer",
-                            IsBevestigd = true
                         });
                 });
 
@@ -1498,25 +1394,6 @@ namespace Zwemclub.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Zwemclub.Models.Carpool", b =>
-                {
-                    b.HasOne("Zwemclub.Models.CustomUser", "Ouder")
-                        .WithMany("AangemaakteCarpools")
-                        .HasForeignKey("OuderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Zwemclub.Models.Wedstrijd", "Wedstrijd")
-                        .WithMany("Carpools")
-                        .HasForeignKey("WedstrijdId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Ouder");
-
-                    b.Navigation("Wedstrijd");
-                });
-
             modelBuilder.Entity("Zwemclub.Models.CustomUser", b =>
                 {
                     b.HasOne("Zwemclub.Models.Geslacht", "Geslacht")
@@ -1525,25 +1402,6 @@ namespace Zwemclub.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Geslacht");
-                });
-
-            modelBuilder.Entity("Zwemclub.Models.GebruikerCarpool", b =>
-                {
-                    b.HasOne("Zwemclub.Models.Carpool", "Carpool")
-                        .WithMany("Deelnemers")
-                        .HasForeignKey("CarpoolId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Zwemclub.Models.CustomUser", "Gebruiker")
-                        .WithMany("CarpoolDeelnames")
-                        .HasForeignKey("GebruikerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Carpool");
-
-                    b.Navigation("Gebruiker");
                 });
 
             modelBuilder.Entity("Zwemclub.Models.InschrijvingWedstrijd", b =>
@@ -1641,17 +1499,8 @@ namespace Zwemclub.Migrations
                     b.Navigation("Wedstrijd");
                 });
 
-            modelBuilder.Entity("Zwemclub.Models.Carpool", b =>
-                {
-                    b.Navigation("Deelnemers");
-                });
-
             modelBuilder.Entity("Zwemclub.Models.CustomUser", b =>
                 {
-                    b.Navigation("AangemaakteCarpools");
-
-                    b.Navigation("CarpoolDeelnames");
-
                     b.Navigation("TrainersAlsZwemmer");
 
                     b.Navigation("VoogdenAlsZwemmer");
@@ -1682,8 +1531,6 @@ namespace Zwemclub.Migrations
 
             modelBuilder.Entity("Zwemclub.Models.Wedstrijd", b =>
                 {
-                    b.Navigation("Carpools");
-
                     b.Navigation("Reeksen");
                 });
 

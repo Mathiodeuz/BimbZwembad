@@ -1,10 +1,19 @@
+using Zwemclub.DTO.EmailDTOs;
+using Zwemclub.Services.EmailService;
+
 namespace Zwemclub.Controllers
 {
     [AllowAnonymous]
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        private readonly IEmailService _emailService;
+        public HomeController(IEmailService emailService)
         {
+            _emailService = emailService;
+        }
+        public async Task<IActionResult> Index()
+        {
+            
             return View();
         }
 

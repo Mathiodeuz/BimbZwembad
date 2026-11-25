@@ -1,3 +1,5 @@
+using Zwemclub.Services.EmailService;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews(options =>
@@ -13,6 +15,7 @@ builder.Services.AddIdentity<CustomUser, IdentityRole>()
 
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 TypeAdapterConfig.GlobalSettings.Scan(typeof(Program).Assembly);
 
 builder.Services.ConfigureApplicationCookie(options =>

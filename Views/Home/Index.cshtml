@@ -2,7 +2,32 @@
     ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welkom bij Zwemclub</h1>
-    <p>Samen trainen, zwemmen en deelnemen aan wedstrijden.</p>
+<div class="hero-section text-center">
+
+    <h1 class="display-3 fw-bold">
+        🏊 BimbZwembad Club
+    </h1>
+
+    <p class="lead mt-3">
+        Welkom bij BimbZwembad Club.
+        Schrijf je in voor wedstrijden, beheer je profiel
+        en blijf op de hoogte van alle clubactiviteiten.
+    </p>
+
+    <div class="mt-5">
+
+        <a asp-controller="Gebruiker"
+           asp-action="Login"
+           class="btn btn-primary btn-lg me-3">
+            Inloggen
+        </a>
+
+        <a asp-controller="Gebruiker"
+           asp-action="Register"
+           class="btn btn-outline-primary btn-lg">
+            Registreren
+        </a>
+
+    </div>
+
 </div>

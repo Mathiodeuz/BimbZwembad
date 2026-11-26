@@ -1,10 +1,6 @@
 namespace Zwemclub.Configuration
 {
-    public class MapperProfile : IRegister
+    public class MapperProfile
     {
-        public void Register(TypeAdapterConfig config)
-        {
-            // Voeg concrete mappings toe zodra er viewmodels zijn.
-        }
     }
 }

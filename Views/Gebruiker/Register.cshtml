@@ -1,0 +1,94 @@
+@using Zwemclub.ViewModels.Gebruiker
+@model RegisterViewModel
+
+@{
+    ViewData["Title"] = "Registreren";
+}
+
+<div class="register-container">
+
+    <div class="register-card">
+
+        <h1 class="page-title">Word lid van BimbZwembad Club</h1>
+
+        <p class="page-subtitle">
+            Maak een account aan om deel te nemen aan wedstrijden en zwemactiviteiten.
+        </p>
+
+        <form asp-action="Register" method="post">
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="hf-two-col">
+
+                <div class="hf-col">
+
+                    <div>
+                        <label asp-for="Voornaam"></label>
+                        <input asp-for="Voornaam" />
+                        <span asp-validation-for="Voornaam" class="text-danger"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="Achternaam"></label>
+                        <input asp-for="Achternaam" />
+                        <span asp-validation-for="Achternaam" class="text-danger"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="Email"></label>
+                        <input asp-for="Email" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                </div>
+
+                <div class="hf-col">
+
+                    <div>
+                        <label asp-for="Geboortedatum"></label>
+                        <input asp-for="Geboortedatum" type="date" />
+                        <span asp-validation-for="Geboortedatum" class="text-danger"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="FederatieNummer"></label>
+                        <input asp-for="FederatieNummer" />
+                        <span asp-validation-for="FederatieNummer" class="text-danger"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="Password"></label>
+                        <input asp-for="Password" type="password" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="ConfirmPassword"></label>
+                        <input asp-for="ConfirmPassword" type="password" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <button class="hf-btn-primary" type="submit">
+                Account aanmaken
+            </button>
+
+            <div class="hf-login-link">
+                <a asp-controller="Gebruiker" asp-action="Login">
+                    Ik heb al een account
+                </a>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,72 @@
+@using Zwemclub.ViewModels.Gebruiker
+@model LoginViewModel
+
+@{
+    ViewData["Title"] = "Inloggen";
+}
+
+<div class="hf-login-page">
+
+    <div class="hf-left-visual">
+        <img src="~/images/swimming-pool.jpg"
+             alt="Zwembad"
+             class="hf-food-img" />
+    </div>
+
+    <div class="hf-right-form">
+
+        <div class="auth-card">
+
+            <h1 class="auth-title">BimbZwembad Club</h1>
+
+            <p class="auth-subtitle">
+                Log in om wedstrijden, resultaten en clubactiviteiten te beheren.
+            </p>
+
+            <form asp-action="Login" method="post" novalidate>
+
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Password" class="form-label"></label>
+                    <input asp-for="Password"
+                           type="password"
+                           class="form-control" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn-reserve">
+                    Inloggen
+                </button>
+
+                <div class="register-row">
+
+                    <p class="not-registered">
+                        Nog geen account?
+                    </p>
+
+                    <a asp-controller="Gebruiker"
+                       asp-action="Register"
+                       class="register-link">
+                        Registreren
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

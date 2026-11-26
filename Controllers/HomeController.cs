@@ -1,4 +1,7 @@
+using System.Diagnostics;
+
 namespace Zwemclub.Controllers
+
 {
     [AllowAnonymous]
     public class HomeController : Controller

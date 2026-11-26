@@ -4,16 +4,16 @@ using Zwemclub.Services.EmailService;
 namespace Zwemclub.Controllers
 {
     [AllowAnonymous]
-    public class HomeController : Controller
+    public class HomeController(UserManager<CustomUser> userManager) : Controller
     {
-        private readonly IEmailService _emailService;
-        public HomeController(IEmailService emailService)
-        {
-            _emailService = emailService;
-        }
+       
         public async Task<IActionResult> Index()
         {
-            
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                var user = await userManager.GetUserAsync(User);
+                ViewBag.Voornaam = user?.Voornaam;
+            }
             return View();
         }
 
@@ -37,6 +37,11 @@ namespace Zwemclub.Controllers
             Response.StatusCode = code is >= 400 and <= 599 ? code : StatusCodes.Status404NotFound;
             ViewData["RequestId"] = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
             return View(Response.StatusCode == StatusCodes.Status404NotFound ? "NotFound" : "Error");
+        }
+
+        public IActionResult ToegangGeweigerd()
+        {
+            return View();
         }
     }
 }

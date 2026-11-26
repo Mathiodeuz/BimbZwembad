@@ -1,12 +1,12 @@
+﻿using Microsoft.AspNetCore.Mvc;
+
 namespace Zwemclub.Controllers
 {
-    [AllowAnonymous]
-    public class AanmeldenController : Controller
+    public class TrainerController : Controller
     {
         public IActionResult Index()
         {
             return View();
         }
-
     }
 }

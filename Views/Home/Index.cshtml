@@ -6,7 +6,15 @@
     <div class="container">
         <div class="row justify-content-center mb-5">
             <div class="col-lg-8 text-center">
-                <h1 class="fw-bold mb-2">Welkom bij onze zwemclub!</h1>
+                
+                @if(User.Identity?.IsAuthenticated  == true)
+                {
+                    <h1>Welkom, @ViewBag.Voornaam!</h1>
+                }
+                else
+                {
+                    <h1 class="fw-bold mb-2">Welkom bij onze zwemclub!</h1>
+                }
                 <h3 class="fw-bold text-primary mb-2">Wie zijn wij?</h3>
                 <p class="text-secondary mb-0">
                     Wij zijn een hechte en familiale zwemclub waar zowel beginnende waterratten als doorgewinterde zwemmers zich meteen thuis voelen. Met een gedreven team van vrijwillige trainers zorgen we elke week voor veilige, leerrijke en vooral plezierige zwemmomenten voor het hele gezin.

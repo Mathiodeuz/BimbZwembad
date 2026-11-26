@@ -1,0 +1,107 @@
+﻿@using Zwemclub.ViewModels
+@model EditProfielViewModel
+
+@{
+    ViewData["Title"] = "Mijn profiel";
+}
+
+<div class="container mt-4 mb-5" style="max-width: 700px;">
+
+    <h1>Mijn profiel</h1>
+    <p class="text-muted">Bekijk en pas je persoonlijke gegevens aan.</p>
+
+    <form asp-action="Edit" method="post">
+
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        @* Uniek nummer: alleen zichtbaar, niet aanpasbaar *@
+        <div class="mb-3">
+            <label class="form-label">Uniek nummer</label>
+            <p class="form-control-plaintext fw-semibold">
+                @Model.UniekNummer
+            </p>
+        </div>
+
+        @* Voornaam *@
+        <div class="mb-3">
+            <label asp-for="Voornaam" class="form-label">Voornaam</label>
+            <input asp-for="Voornaam" class="form-control" autocomplete="given-name" />
+            <span asp-validation-for="Voornaam" class="text-danger"></span>
+        </div>
+
+        @* Achternaam *@
+        <div class="mb-3">
+            <label asp-for="Naam" class="form-label">Achternaam</label>
+            <input asp-for="Naam" class="form-control" autocomplete="family-name" />
+            <span asp-validation-for="Naam" class="text-danger"></span>
+        </div>
+
+        @* E-mailadres *@
+        <div class="mb-3">
+            <label asp-for="Email" class="form-label">E-mailadres</label>
+            <input asp-for="Email" type="email" class="form-control" autocomplete="email" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        @* Telefoon *@
+        <div class="mb-3">
+            <label asp-for="Telefoon" class="form-label">Gsm-nummer</label>
+            <input asp-for="Telefoon" type="tel" class="form-control" autocomplete="tel" />
+            <span asp-validation-for="Telefoon" class="text-danger"></span>
+        </div>
+
+        @* Geboortedatum *@
+        <div class="mb-3">
+            <label asp-for="Geboortedatum" class="form-label">Geboortedatum</label>
+            <input asp-for="Geboortedatum" type="date" class="form-control" />
+            <span asp-validation-for="Geboortedatum" class="text-danger"></span>
+        </div>
+
+        @* Geslacht *@
+        <div class="mb-3">
+            <label class="form-label">Geslacht</label>
+            <p class="form-control-plaintext">
+                @Model.GeslachtsNaam
+            </p>
+        </div>
+
+        <div class="d-flex gap-2 mt-4">
+            <button type="submit" class="btn btn-primary">
+                Gegevens opslaan
+            </button>
+
+            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
+                Terug
+            </a>
+        </div>
+
+    </form>
+
+    <hr class="my-4" />
+
+    @* Account verwijderen *@
+    <div class="mt-4">
+        <h4 class="text-danger">Account verwijderen</h4>
+        <p class="text-muted">
+            Als je je account verwijdert, wordt je account gedeactiveerd
+            en worden je persoonlijke gegevens geanonimiseerd.
+        </p>
+
+        <form asp-controller="Account" asp-action="Delete" method="post">
+            <button type="submit" class="btn btn-danger"
+                    onclick="return confirm('Ben je zeker dat je jouw account wilt verwijderen?')">
+                    Ja, verwijder mijn account
+            </button>
+
+            <a asp-controller="Account" asp-action="Edit"
+               class="btn btn-outline-secondary">
+                Annuleren
+            </a>
+        </form>
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

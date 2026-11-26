@@ -1,0 +1,26 @@
+﻿@using Zwemclub.ViewModels
+@model RegistratieViewModel
+
+<h1>Controleer je gegevens</h1>
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<dl>
+    <dt>Rol</dt>
+    <dd>@Model.Rol</dd>
+    <dt>Naam</dt>
+    <dd>@Model.Voornaam @Model.Naam</dd>
+    <dt>E-mail</dt>
+    <dd>@Model.Email</dd>
+    <dt>Telefoon</dt>
+    <dd>@Model.Telefoon</dd>
+    @if (Model.Geboortedatum is not null)
+    {
+        <dt>Geboortedatum</dt>
+        <dd>@Model.Geboortedatum</dd>
+    }
+</dl>
+
+<form asp-action="BevestigPost" method="post">
+    <button type="submit">Bevestigen</button>
+</form>
+<a asp-action="Register" asp-route-rol="@Model.Rol">Terug</a>

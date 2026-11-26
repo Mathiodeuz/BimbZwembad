@@ -53,6 +53,21 @@
                                       && u.IsVerwijderd != true);
         }
 
+        public async Task<int> GetVolgendeUniekNummerAsync()
+        {
+            //ignorequeryfilters omdat er een filter staat en anders de verwijderde niet meegeteld zouden worden.
+            var nummers = await context.Users
+                .IgnoreQueryFilters()
+                .Select(u => u.UniekNummer)
+                .ToListAsync();
+            //ga in de lijst en zoek naar de numerieke huidige maximum waarde van de code en doe plus 1.
+            return nummers
+                .Where(n => n.StartsWith("ZC-") && int.TryParse(n[3..], out _))
+                .Select(n => int.Parse(n[3..]))
+                .DefaultIfEmpty(0)
+                .Max() + 1;
+        }
+
         public async Task<IEnumerable<CustomUser>> ZoekOpNaamAsync(string zoekterm)
         {
             return await context.Users

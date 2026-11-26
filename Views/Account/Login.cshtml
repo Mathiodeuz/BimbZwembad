@@ -1,0 +1,21 @@
+﻿@using Zwemclub.ViewModels
+@model LoginViewModel
+
+<h1>Aanmelden</h1>
+
+<form asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <label asp-for="Email"></label>
+    <input asp-for="Email" />
+    <span asp-validation-for="Email"></span>
+
+    <label asp-for="Wachtwoord"></label>
+    <input asp-for="Wachtwoord" type="password" />
+    <span asp-validation-for="Wachtwoord"></span>
+
+    <button type="submit">Inloggen</button>
+</form>
+
+<a asp-action="Register">Nog geen account? Registreer je</a>
+<a asp-action="WachtwoordVergeten">Wachtwoord vergeten?</a>

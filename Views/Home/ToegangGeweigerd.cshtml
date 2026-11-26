@@ -1,0 +1,25 @@
+﻿@{
+    ViewData["Title"] = "Toegang geweigerd";
+}
+
+<div class="container mt-5 text-center">
+    <div class="card shadow-sm p-5 mx-auto" style="max-width: 600px;">
+        <h1 class="display-4 text-danger">403</h1>
+
+        <h2 class="mb-3">Toegang geweigerd</h2>
+
+        <p class="text-muted">
+            Je hebt geen toestemming om deze pagina te bekijken.
+            Als je denkt dat dit een fout is, neem dan contact op met de beheerder.
+        </p>
+
+        <div class="mt-4">
+            <a asp-controller="Home"
+               asp-action="Index"
+               class="btn btn-primary">
+                Terug naar de startpagina
+            </a>
+        </div>
+    </div>
+</div>
+

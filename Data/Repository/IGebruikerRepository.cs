@@ -8,5 +8,6 @@
         Task<IEnumerable<CustomUser>> GetActieveZwemmersAsync();
         Task<IEnumerable<CustomUser>> GetActieveZwemmersZonderCoachAsync();
         Task<IEnumerable<CustomUser>> ZoekOpNaamAsync(string zoekterm);
+        Task<int> GetVolgendeUniekNummerAsync();
     }
 }

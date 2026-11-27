@@ -17,8 +17,12 @@
         [Phone(ErrorMessage = "Ongeldig telefoonnummer.")]
         public string? Telefoon { get; set; }
         public DateOnly? Geboortedatum { get; set; }
-        public string? GeslachtsNaam { get; set; }
+        [Required(ErrorMessage="Selecteer een gender")]
+        public int? GeslachtId { get; set; }
         public string? FederatieNummer { get; set; } = string.Empty;
+        public string? ProfielFoto { get; set; } = string.Empty;
         public string UniekNummer { get; set; } = string.Empty;
+        public IFormFile? ProfielFotoUpload { get; set; }
+        public string? HuidigeProfielFoto { get; set; }
     }
 }

@@ -5,7 +5,10 @@ using Zwemclub.ViewModels;
 namespace Zwemclub.Controllers
 {
     [AllowAnonymous]
-    public class AccountController(UserManager<CustomUser> userManager, SignInManager<CustomUser> signInManager,IRegistratieService registratieService) : Controller
+    public class AccountController(UserManager<CustomUser> userManager, 
+        SignInManager<CustomUser> signInManager,
+        IRegistratieService registratieService,
+        IWebHostEnvironment environment) : Controller
     {
         private const string SessieSleutel = "Registratie";
         [HttpGet]
@@ -103,6 +106,76 @@ namespace Zwemclub.Controllers
 
             if (!ModelState.IsValid)
                 return View(model);
+            var testUser = new CustomUser
+            {
+                UserName = model.Email,
+                Email = model.Email
+            };
+
+            foreach (var validator in userManager.PasswordValidators)
+            {
+                var result = await validator.ValidateAsync(
+                    userManager,
+                    testUser,
+                    model.Wachtwoord
+                );
+
+                if (!result.Succeeded)
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(nameof(model.Wachtwoord), error.Description);
+                    }
+                }
+            }
+
+            // Als het wachtwoord niet voldoet, blijf op de registratiepagina.
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+
+            if (model.ProfielFoto is not null)
+            {
+                var foto = model.ProfielFoto;
+
+                if (foto.Length > 5 * 1024 * 1024)
+                {
+                    ModelState.AddModelError(nameof(model.ProfielFoto),
+                        "De afbeelding mag maximaal 5 MB groot zijn.");
+
+                    return View(model);
+                }
+
+                var toegestaneExtensies = new[] { ".jpg", ".jpeg", ".png", ".webp" };
+                var extensie = Path.GetExtension(foto.FileName).ToLowerInvariant();
+
+                if (!toegestaneExtensies.Contains(extensie))
+                {
+                    ModelState.AddModelError(nameof(model.ProfielFoto),
+                        "Gebruik een JPG, PNG of WEBP afbeelding.");
+
+                    return View(model);
+                }
+
+                var tijdelijkeMap = Path.Combine(environment.ContentRootPath, "App_Data", "TempProfielFotos");
+
+                Directory.CreateDirectory(tijdelijkeMap);
+
+                var bestandsnaam = $"{Guid.NewGuid()}{extensie}";
+                var bestandspad = Path.Combine(tijdelijkeMap, bestandsnaam);
+
+                using (var stream = new FileStream(bestandspad, FileMode.Create))
+                {
+                    await foto.CopyToAsync(stream);
+                }
+
+                model.ProfielFotoPad = bestandspad;
+            }
+
+
+
             HttpContext.Session.SetJson(SessieSleutel, model);
             return RedirectToAction(nameof(Bevestig));
         }
@@ -147,7 +220,7 @@ namespace Zwemclub.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit()
         {
-            var user = await userManager.Users.Include(u => u.Geslacht).FirstOrDefaultAsync(u=>u.Id == userManager.GetUserId(User)); ;
+            var user = await userManager.GetUserAsync(User); ;
 
             if (user is null)
                 return Challenge();
@@ -161,7 +234,8 @@ namespace Zwemclub.Controllers
                 Email = user.Email ?? "",
                 Telefoon = user.PhoneNumber,
                 Geboortedatum = user.Geboortedatum,
-                GeslachtsNaam = user.Geslacht?.Naam
+                GeslachtId = user.GeslachtId,
+                HuidigeProfielFoto = user.ProfielFoto
             };
 
             return View(model);
@@ -185,6 +259,7 @@ namespace Zwemclub.Controllers
             user.PhoneNumber = model.Telefoon;
             user.Geboortedatum = model.Geboortedatum;
 
+            user.GeslachtId = model.GeslachtId;
 
             var emailResult = await userManager.SetEmailAsync(user, model.Email);
 
@@ -207,6 +282,57 @@ namespace Zwemclub.Controllers
                 return View(model);
             }
 
+            if (model.ProfielFotoUpload is not null
+                && model.ProfielFotoUpload.Length > 0)
+            {
+                var foto = model.ProfielFotoUpload;
+
+                var toegestaneExtensies = new[] { ".jpg", ".jpeg", ".png", ".webp" };
+                var extensie = Path.GetExtension(foto.FileName).ToLowerInvariant();
+
+                if (foto.Length > 5 * 1024 * 1024 ||
+                    !toegestaneExtensies.Contains(extensie))
+                {
+                    ModelState.AddModelError(
+                        nameof(model.ProfielFotoUpload),
+                        "De foto moet een JPG, PNG of WEBP zijn en maximaal 5 MB groot.");
+
+                    model.HuidigeProfielFoto = user.ProfielFoto;
+                    return View(model);
+                }
+
+                var uploadMap = Path.Combine(
+                    environment.WebRootPath,
+                    "uploads",
+                    "profiel");
+
+                Directory.CreateDirectory(uploadMap);
+
+                var bestandsnaam = $"{Guid.NewGuid()}{extensie}";
+                var bestandspad = Path.Combine(uploadMap, bestandsnaam);
+
+                using (var stream = new FileStream(bestandspad, FileMode.Create))
+                {
+                    await foto.CopyToAsync(stream);
+                }
+
+                // Oude foto verwijderen
+                if (!string.IsNullOrEmpty(user.ProfielFoto))
+                {
+                    var oudPad = Path.Combine(
+                        environment.WebRootPath,
+                        user.ProfielFoto.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
+
+                    if (System.IO.File.Exists(oudPad))
+                        System.IO.File.Delete(oudPad);
+                }
+
+                // Nieuw pad bewaren
+                user.ProfielFoto = $"/uploads/profiel/{bestandsnaam}";
+            }
+
+
+
             var updateResult = await userManager.UpdateAsync(user);
 
             if (!updateResult.Succeeded)
@@ -219,7 +345,7 @@ namespace Zwemclub.Controllers
 
             TempData["Success"] = "Je profiel werd succesvol bijgewerkt.";
 
-            return RedirectToAction(nameof(Edit));
+            return RedirectToAction(nameof(Profiel));
         }
 
         [HttpPost]
@@ -243,6 +369,15 @@ namespace Zwemclub.Controllers
             user.Geboortedatum = null;
             user.GeslachtId = null;
             user.FederatieNummer = null;
+            if (!string.IsNullOrEmpty(user.ProfielFoto))
+            {
+                var fotoPad = Path.Combine(
+                    environment.WebRootPath,
+                    user.ProfielFoto.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
+
+                if (System.IO.File.Exists(fotoPad))
+                    System.IO.File.Delete(fotoPad);
+            }
             user.ProfielFoto = null;
 
 
@@ -271,6 +406,35 @@ namespace Zwemclub.Controllers
             await signInManager.SignOutAsync();
 
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Profiel()
+        {
+
+            var userId = userManager.GetUserId(User);
+
+            var user = await userManager.Users
+                .Include(u => u.Geslacht)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user is null)
+                return Challenge();
+
+            var model = new ProfielViewModel
+            {
+                Voornaam = user.Voornaam ?? "",
+                Naam = user.Naam ?? "",
+                Email = user.Email ?? "",
+                Telefoon = user.PhoneNumber,
+                Geboortedatum = user.Geboortedatum,
+                GeslachtsNaam = user.Geslacht?.Naam,
+                UniekNummer = user.UniekNummer,
+                FederatieNummer = user.FederatieNummer,
+                ProfielFoto = user.ProfielFoto
+            };
+
+            return View(model);
         }
     }
 }

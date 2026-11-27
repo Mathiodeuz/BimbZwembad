@@ -8,9 +8,9 @@
 <div class="container mt-4 mb-5" style="max-width: 700px;">
 
     <h1>Mijn profiel</h1>
-    <p class="text-muted">Bekijk en pas je persoonlijke gegevens aan.</p>
+    <p class="text-muted">Pas je persoonlijke gegevens aan.</p>
 
-    <form asp-action="Edit" method="post">
+    <form asp-action="Edit" method="post" enctype="multipart/form-data">
 
         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
@@ -20,6 +20,30 @@
             <p class="form-control-plaintext fw-semibold">
                 @Model.UniekNummer
             </p>
+        </div>
+        @* ProfielFoto *@
+        <div class="mb-3">
+            <label asp-for="ProfielFotoUpload" class="form-label">
+                Profielfoto aanpassen
+            </label>
+
+            @if (!string.IsNullOrEmpty(Model.HuidigeProfielFoto))
+            {
+                <div class="mb-3">
+                    <img src="@Model.HuidigeProfielFoto"
+                         alt="Huidige profielfoto"
+                         class="rounded-circle"
+                         style="width: 120px; height: 120px; object-fit: cover;" />
+                </div>
+            }
+
+            <input asp-for="ProfielFotoUpload"
+                   type="file"
+                   class="form-control"
+                   accept="image/*" />
+
+            <span asp-validation-for="ProfielFotoUpload"
+                  class="text-danger"></span>
         </div>
 
         @* Voornaam *@
@@ -59,19 +83,29 @@
 
         @* Geslacht *@
         <div class="mb-3">
-            <label class="form-label">Geslacht</label>
-            <p class="form-control-plaintext">
-                @Model.GeslachtsNaam
-            </p>
+            <label asp-for="GeslachtId" class="form-label">Geslacht</label>
+
+            <select asp-for="GeslachtId" class="form-select">
+                <option value="">-- Selecteer je geslacht --</option>
+                <option value="1">Man</option>
+                <option value="2">Vrouw</option>
+                <option value="3">Andere</option>
+            </select>
+
+            <span asp-validation-for="GeslachtId" class="text-danger"></span>
         </div>
+        
+        
 
         <div class="d-flex gap-2 mt-4">
             <button type="submit" class="btn btn-primary">
                 Gegevens opslaan
             </button>
 
-            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
-                Terug
+            <a asp-controller="Account"
+               asp-action="Profiel"
+               class="btn btn-outline-secondary">
+                Terug naar profiel
             </a>
         </div>
 

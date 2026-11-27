@@ -2,7 +2,9 @@
 
 namespace Zwemclub.Services.RegistratieService
 {
-    public class RegistratieService(UserManager<CustomUser> userManager, IUnitOfWork unitOfWork) : IRegistratieService
+    public class RegistratieService(UserManager<CustomUser> userManager, 
+        IUnitOfWork unitOfWork,
+        IWebHostEnvironment environment) : IRegistratieService
     {
         public async Task<IdentityResult> RegistreerAsync(RegistratieViewModel model)
         {
@@ -31,12 +33,35 @@ namespace Zwemclub.Services.RegistratieService
                 PhoneNumber = model.Telefoon,
                 Voornaam = model.Voornaam,
                 Naam = model.Naam,
+                ProfielFoto = model.ProfielFotoPad,
                 Geboortedatum = model.Geboortedatum,
                 GeslachtId = model.GeslachtId!.Value,
                 UniekNummer = $"ZC-{nummer:D4}",
                 IsActief = true,                 
                 IsVerwijderd = false
             };
+
+            if (!string.IsNullOrEmpty(model.ProfielFotoPad)
+                && File.Exists(model.ProfielFotoPad))
+            {
+                var uploadMap = Path.Combine(
+                    environment.WebRootPath,
+                    "uploads",
+                    "profiel");
+
+                Directory.CreateDirectory(uploadMap);
+
+                var extensie = Path.GetExtension(model.ProfielFotoPad);
+                var bestandsnaam = $"{Guid.NewGuid()}{extensie}";
+
+                var definitiefPad = Path.Combine(uploadMap, bestandsnaam);
+
+                File.Move(model.ProfielFotoPad, definitiefPad);
+
+                user.ProfielFoto = $"/uploads/profiel/{bestandsnaam}";
+            }
+
+
 
             var result = await userManager.CreateAsync(user, model.Wachtwoord);
             if (!result.Succeeded)

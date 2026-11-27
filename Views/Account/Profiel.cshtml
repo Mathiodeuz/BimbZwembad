@@ -1,0 +1,108 @@
+﻿@model Zwemclub.ViewModels.ProfielViewModel
+
+@{
+    ViewData["Title"] = "Mijn profiel";
+}
+
+<div class="container mt-4 mb-5" style="max-width: 800px;">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>Mijn profiel</h1>
+            <p class="text-muted mb-0">
+                Bekijk je persoonlijke gegevens.
+            </p>
+        </div>
+
+        <a asp-controller="Account"
+           asp-action="Edit"
+           class="btn btn-primary">
+            Profiel aanpassen
+        </a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <h4 class="mb-3">Persoonlijke gegevens</h4>
+
+            <dl class="row">
+                <div class="text-center mb-4">
+                    @if (!string.IsNullOrEmpty(Model.ProfielFoto))
+                    {
+                        <img src="@Model.ProfielFoto"
+                             alt="Profielfoto van @Model.Voornaam @Model.Naam"
+                             class="rounded-circle"
+                             style="width: 160px; height: 160px; object-fit: cover;" />
+                    }
+                    else
+                    {
+                        <img src="/images/default-profile.png"
+                             alt="Standaard profielfoto"
+                             class="rounded-circle"
+                             style="width: 160px; height: 160px; object-fit: cover;" />
+                    }
+                </div>
+
+                <dt class="col-sm-4">Voornaam</dt>
+                <dd class="col-sm-8">@Model.Voornaam</dd>
+
+                <dt class="col-sm-4">Achternaam</dt>
+                <dd class="col-sm-8">@Model.Naam</dd>
+
+                <dt class="col-sm-4">Geboortedatum</dt>
+                <dd class="col-sm-8">
+                    @(Model.Geboortedatum?.ToString("dd/MM/yyyy") ?? "Niet opgegeven")
+                </dd>
+
+                <dt class="col-sm-4">Geslacht</dt>
+                <dd class="col-sm-8">
+                    @(Model.GeslachtsNaam ?? "Niet opgegeven")
+                </dd>
+
+            </dl>
+
+            <hr />
+
+            <h4 class="mb-3">Contactgegevens</h4>
+
+            <dl class="row">
+
+                <dt class="col-sm-4">E-mailadres</dt>
+                <dd class="col-sm-8">@Model.Email</dd>
+
+                <dt class="col-sm-4">Telefoonnummer</dt>
+                <dd class="col-sm-8">
+                    @(Model.Telefoon ?? "Niet opgegeven")
+                </dd>
+
+            </dl>
+
+            <hr />
+
+            <h4 class="mb-3">Zwemclubgegevens</h4>
+
+            <dl class="row">
+
+                <dt class="col-sm-4">Uniek nummer</dt>
+                <dd class="col-sm-8">@Model.UniekNummer</dd>
+
+                <dt class="col-sm-4">Federatienummer</dt>
+                <dd class="col-sm-8">
+                    @(Model.FederatieNummer ?? "Niet opgegeven")
+                </dd>
+
+            </dl>
+
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a asp-controller="Home"
+           asp-action="Index"
+           class="btn btn-outline-secondary">
+            Terug naar home
+        </a>
+    </div>
+
+</div>

@@ -7,7 +7,7 @@
 
 <h1>Registreren als @Model.Rol.ToLower()</h1>
 
-<form asp-action="Register" method="post" class="mt-3" style="max-width: 480px;">
+<form asp-action="Register" method="post" enctype="mmultipart/form-data" class="mt-3" style="max-width: 480px;">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
     <input type="hidden" asp-for="Rol" />
@@ -56,6 +56,20 @@
         <label asp-for="Telefoon" class="form-label">Gsm-nummer</label>
         <input asp-for="Telefoon" type="tel" class="form-control" autocomplete="tel" />
         <span asp-validation-for="Telefoon" class="text-danger"></span>
+    </div>
+    
+    <div class="mb-3">
+        <label asp-for="ProfielFoto" class="form-label">
+            Profielfoto
+        </label>
+
+        <input asp-for="ProfielFoto"
+               type="file"
+               class="form-control"
+               accept="image/*" />
+
+        <span asp-validation-for="ProfielFoto"
+              class="text-danger"></span>
     </div>
 
     <div class="mb-3">

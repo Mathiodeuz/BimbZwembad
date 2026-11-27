@@ -38,6 +38,9 @@
                         @if(User.Identity?.IsAuthenticated == true)
                             {
                             <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Profiel">Profiel</a>
+                            </li>
+                            <li class="nav-item">
                                 <form asp-controller="Account"
                                       asp-action="Logout"
                                       method="post">

@@ -1,4 +1,6 @@
-﻿namespace Zwemclub.ViewModels
+﻿using System.Text.Json.Serialization;
+
+namespace Zwemclub.ViewModels
 {
     public class RegistratieViewModel
     {
@@ -31,5 +33,8 @@
         [Compare(nameof(Wachtwoord), ErrorMessage = "De wachtwoorden komen niet overeen.")]
         [DataType(DataType.Password)]
         public string BevestigWachtwoord { get; set; } = string.Empty;
+        [JsonIgnore]
+        public IFormFile? ProfielFoto { get; set; }
+        public string? ProfielFotoPad { get; set; }
     }
 }

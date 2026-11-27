@@ -14,6 +14,7 @@ namespace Zwemclub.Data.UnitOfWork
         private IGenericRepository<Mail>? mails;
         private IGenericRepository<Plaats>? plaatsen;
         private IGenericRepository<Geslacht>? geslachten;
+        private IGenericRepository<ContactBericht>? contactBerichten;
 
         public IGebruikerRepository Gebruikers =>
             gebruikers ??= new GebruikerRepository(context);
@@ -47,6 +48,9 @@ namespace Zwemclub.Data.UnitOfWork
 
         public IGenericRepository<Geslacht> Geslachten =>
             geslachten ??= new GenericRepository<Geslacht>(context);
+
+        public IGenericRepository<ContactBericht> ContactBerichten =>
+            contactBerichten ??= new GenericRepository<ContactBericht>(context);
 
         public async Task SaveChangesAsync()
         {

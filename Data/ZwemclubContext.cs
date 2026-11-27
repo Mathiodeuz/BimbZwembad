@@ -14,6 +14,7 @@ namespace Zwemclub.Data
         public DbSet<Plaats> Plaatsen => Set<Plaats>();
         public DbSet<Geslacht> Geslachten => Set<Geslacht>();
         public DbSet<Wedstrijd> Wedstrijden => Set<Wedstrijd>();
+        public DbSet<ContactBericht> ContactBerichten => Set<ContactBericht>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

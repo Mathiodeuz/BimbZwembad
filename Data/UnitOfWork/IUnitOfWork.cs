@@ -13,7 +13,7 @@ namespace Zwemclub.Data.UnitOfWork
         IGenericRepository<Mail> Mails { get; }
         IGenericRepository<Plaats> Plaatsen { get; }
         IGenericRepository<Geslacht> Geslachten { get; }
-
+        IGenericRepository<ContactBericht> ContactBerichten { get; }
         Task SaveChangesAsync();
     }
 }

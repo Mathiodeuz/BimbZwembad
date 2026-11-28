@@ -1,0 +1,62 @@
+﻿@model Zwemclub.ViewModels.WachtwoordVergetenViewModel
+
+@{
+    ViewData["Title"] = "Wachtwoord vergeten";
+}
+
+<div class="container mt-5 mb-5" style="max-width: 600px;">
+
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+
+            <h1 class="h3 mb-3">Wachtwoord vergeten?</h1>
+
+            <p class="text-muted">
+                Vul je e-mailadres in. Je ontvangt een link waarmee
+                je je wachtwoord opnieuw kunt instellen.
+            </p>
+
+            <form asp-controller="Account"
+                  asp-action="Forgot"
+                  method="post">
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label">
+                        E-mailadres
+                    </label>
+
+                    <input asp-for="Email"
+                           type="email"
+                           class="form-control"
+                           autocomplete="email"
+                           placeholder="naam@example.com" />
+
+                    <span asp-validation-for="Email"
+                          class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">
+                    Verstuur resetlink
+                </button>
+
+            </form>
+
+            <div class="text-center mt-3">
+                <a asp-controller="Home"
+                   asp-action="Index"
+                   class="text-decoration-none">
+                    Terug naar home
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

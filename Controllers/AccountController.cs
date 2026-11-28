@@ -1,3 +1,8 @@
+using Microsoft.AspNetCore.WebUtilities;
+using System.Text;
+using System.Text.Encodings.Web;
+using Zwemclub.DTO.EmailDTOs;
+using Zwemclub.Services.EmailService;
 using Zwemclub.Services.RegistratieService;
 using Zwemclub.Utils;
 using Zwemclub.ViewModels;
@@ -8,7 +13,8 @@ namespace Zwemclub.Controllers
     public class AccountController(UserManager<CustomUser> userManager, 
         SignInManager<CustomUser> signInManager,
         IRegistratieService registratieService,
-        IWebHostEnvironment environment) : Controller
+        IWebHostEnvironment environment,
+        IEmailService emailService) : Controller
     {
         private const string SessieSleutel = "Registratie";
         [HttpGet]
@@ -56,7 +62,7 @@ namespace Zwemclub.Controllers
             }
 
             await signInManager.SignInAsync(user, isPersistent: false);
-            Debug.WriteLine($"Signed in: {signInManager.IsSignedIn(User)}");
+            
 
             if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                 return LocalRedirect(returnUrl);
@@ -129,7 +135,7 @@ namespace Zwemclub.Controllers
                 }
             }
 
-            // Als het wachtwoord niet voldoet, blijf op de registratiepagina.
+            
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -316,7 +322,7 @@ namespace Zwemclub.Controllers
                     await foto.CopyToAsync(stream);
                 }
 
-                // Oude foto verwijderen
+                
                 if (!string.IsNullOrEmpty(user.ProfielFoto))
                 {
                     var oudPad = Path.Combine(
@@ -327,7 +333,7 @@ namespace Zwemclub.Controllers
                         System.IO.File.Delete(oudPad);
                 }
 
-                // Nieuw pad bewaren
+                
                 user.ProfielFoto = $"/uploads/profiel/{bestandsnaam}";
             }
 
@@ -435,6 +441,170 @@ namespace Zwemclub.Controllers
             };
 
             return View(model);
+        }
+        [HttpGet]
+        public async Task<IActionResult> Forgot()
+        {
+            
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Forgot(
+        WachtwoordVergetenViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var user = await userManager.FindByEmailAsync(model.Email);
+
+            
+            if (user is not null && user.IsActief && user.IsVerwijderd != true)
+            {
+                
+                var token = await userManager.GeneratePasswordResetTokenAsync(user);
+
+                
+                
+                var encodedToken = WebEncoders.Base64UrlEncode(
+                    Encoding.UTF8.GetBytes(token)
+                );
+
+                
+                var resetLink = Url.Action(
+                    nameof(Reset),
+                    "Account",
+                    new
+                    {
+                        email = user.Email,
+                        token = encodedToken
+                    },
+                    protocol: Request.Scheme
+                );
+
+                
+                var email = new EmailDTO
+                {
+                    To = user.Email!,
+                    Subject = "Wachtwoord opnieuw instellen",
+                    Body = $"""
+                <h2>Wachtwoord opnieuw instellen</h2>
+
+                <p>Beste {HtmlEncoder.Default.Encode(user.Voornaam ?? "gebruiker")},</p>
+
+                <p>
+                    Je hebt aangevraagd om je wachtwoord opnieuw in te stellen.
+                    Klik op de onderstaande link om een nieuw wachtwoord te kiezen.
+                </p>
+
+                <p>
+                    <a href="{resetLink}">
+                        Nieuw wachtwoord instellen
+                    </a>
+                </p>
+
+                <p>
+                    Heb je deze aanvraag niet gedaan?
+                    Dan mag je deze e-mail gewoon negeren.
+                </p>
+
+                <p>Met vriendelijke groeten,<br/>Zwemclub</p>
+                """
+                };
+
+                
+                await emailService.SendEmailAsync(email);
+            }
+
+
+            TempData["Success"] =
+                "Als dit e-mailadres bij een account hoort, ontvang je een e-mail met een link om je wachtwoord opnieuw in te stellen.";
+
+            return RedirectToAction(nameof(BevestigingForgot));
+        }
+
+
+        
+        [HttpGet]
+        public IActionResult BevestigingForgot()
+        {
+            return View();
+        }
+
+
+        [HttpGet]
+        public IActionResult Reset(string email, string token)
+        {
+            try
+            {
+                var decodedToken = Encoding.UTF8.GetString(
+                    WebEncoders.Base64UrlDecode(token)
+                );
+                
+
+                var model = new WachtwoordResettenViewModel
+                {
+                    Email = email,
+                    Token = decodedToken
+                };
+                //anders pakt deze de base64-encoded token die in Forgot post.
+                ModelState.Remove(nameof(model.Token));
+
+                return View(model);
+            }
+            catch (FormatException)
+            {
+                return View("ResetLinkOngeldig");
+            }
+        }
+
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Reset(
+        WachtwoordResettenViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var user = await userManager.FindByEmailAsync(model.Email);
+
+            if (user is null)
+            {
+                ModelState.AddModelError("",
+                    "De resetlink is ongeldig of verlopen.");
+
+                return View(model);
+            }
+
+
+            var result = await userManager.ResetPasswordAsync(
+                user,
+                model.Token,
+                model.NieuwWachtwoord
+            );
+
+            
+
+
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(
+                        nameof(model.NieuwWachtwoord),
+                        error.Description
+                    );
+                }
+
+                return View(model);
+            }
+
+            TempData["Success"] = "Je wachtwoord werd succesvol gewijzigd.";
+
+            return RedirectToAction(nameof(Login));
         }
     }
 }

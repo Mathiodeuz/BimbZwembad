@@ -1,0 +1,67 @@
+﻿@model Zwemclub.ViewModels.WachtwoordResettenViewModel
+
+@{
+    ViewData["Title"] = "Nieuw wachtwoord instellen";
+}
+
+<div class="container mt-5 mb-5" style="max-width: 600px;">
+
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+
+            <h1 class="h3 mb-3">Nieuw wachtwoord instellen</h1>
+
+            <p class="text-muted">
+                Kies een nieuw wachtwoord voor je account.
+            </p>
+
+            <form asp-controller="Account"
+                  asp-action="Reset"
+                  method="post">
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3"></div>
+
+                <input asp-for="Email" type="hidden" />
+                <input asp-for="Token" type="hidden" />
+
+                <div class="mb-3">
+                    <label asp-for="NieuwWachtwoord" class="form-label">
+                        Nieuw wachtwoord
+                    </label>
+
+                    <input asp-for="NieuwWachtwoord"
+                           class="form-control"
+                           autocomplete="new-password" />
+
+                    <span asp-validation-for="NieuwWachtwoord"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="BevestigWachtwoord" class="form-label">
+                        Bevestig nieuw wachtwoord
+                    </label>
+
+                    <input asp-for="BevestigWachtwoord"
+                           class="form-control"
+                           autocomplete="new-password" />
+
+                    <span asp-validation-for="BevestigWachtwoord"
+                          class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">
+                    Wachtwoord wijzigen
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

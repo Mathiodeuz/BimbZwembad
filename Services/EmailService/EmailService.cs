@@ -22,9 +22,11 @@ namespace Zwemclub.Services.EmailService
             email.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = request.Body };
 
             using var smtp = new SmtpClient();
-            smtp.Connect("localhost",1025,MailKit.Security.SecureSocketOptions.None);
-            smtp.Send(email);
-            smtp.Disconnect(true);
+            var host = _config["MailSettings:Host"];
+            var port = int.Parse(_config["MailSettings:Port"]!);
+            smtp.Connect(host,port,MailKit.Security.SecureSocketOptions.None);
+            await smtp.SendAsync(email);
+            await smtp.DisconnectAsync(true);
         }
     }
 }

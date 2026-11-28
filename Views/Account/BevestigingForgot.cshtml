@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "E-mail verstuurd";
+}
+
+<div class="container mt-5 mb-5" style="max-width: 600px;">
+
+    <div class="card shadow-sm">
+        <div class="card-body text-center p-4">
+
+            <h1 class="h3 mb-3">Controleer je e-mail</h1>
+
+            <p>
+                Als het opgegeven e-mailadres bij een account hoort,
+                ontvang je een link om je wachtwoord opnieuw in te stellen.
+            </p>
+
+            <p class="text-muted">
+                Controleer ook je spam- of ongewenste e-mailmap.
+            </p>
+
+            <a asp-controller="Account"
+               asp-action="Login"
+               class="btn btn-primary mt-3">
+                Terug naar aanmelden
+            </a>
+
+        </div>
+    </div>
+
+</div>
